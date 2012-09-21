@@ -53,8 +53,8 @@ public class APNSConnectionHandler implements APNSConnectionMonitor {
 
     private volatile APNSConnection apnsConnection;
 
-    private static String apnsHost = "gateway.sandbox.push.apple.com";
-    private static int apnsPort = 2195;
+    public static String apnsHost = "gateway.push.apple.com"; //gateway.sandbox.push.apple.com
+    public static int apnsPort = 2195;
 
     private boolean persistent;
 
