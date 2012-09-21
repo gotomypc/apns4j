@@ -85,24 +85,36 @@ public class APNSConnectionHandler implements APNSConnectionMonitor {
      */
     public APNSConnectionHandler(File keyFile, char[] passParse) throws KeyStoreException,
             NoSuchAlgorithmException, IOException, CertificateException, UnrecoverableKeyException, KeyManagementException, Exception {
+        this(keyFile, passParse, false);
+    }
 
+    /**
+     * Basic constructor of ASPN Connection
+     * loads the key char file and passparse
+     * sets the number of concurrent connections to APNS service
+     *
+     * @param keyFile   key file
+     * @param passParse pass parse
+     * @throws KeyStoreException
+     * @throws NoSuchAlgorithmException
+     * @throws IOException
+     * @throws CertificateException
+     * @throws UnrecoverableKeyException
+     * @throws KeyManagementException
+     */
+    public APNSConnectionHandler(File keyFile, char[] passParse, boolean persistent) throws KeyStoreException,
+            NoSuchAlgorithmException, IOException, CertificateException, UnrecoverableKeyException, KeyManagementException, Exception {
         if (passParse.length <= 0) {
             throw new Exception("Exception passParse cant be null OR blank");
         }
-
-
         keyStore = KeyStore.getInstance("PKCS12");
         keyManagerFactory = KeyManagerFactory.getInstance("SunX509");
         sslContext = SSLContext.getInstance("TLS");
-
-
         keyStore.load(new FileInputStream(keyFile), passParse);
-
-
         keyManagerFactory.init(keyStore, passParse);
         sslContext.init(keyManagerFactory.getKeyManagers(), null, null);
         sslSocketFactory = sslContext.getSocketFactory();
-
+        this.persistent = persistent;
 
         initSocketConnection();
 
