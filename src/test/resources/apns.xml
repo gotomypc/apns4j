@@ -1,0 +1,11 @@
+<?xml version="1.0" encoding="UTF-8" standalone="yes"?>
+<APNSConfigFile>
+    <connectionConfig>
+        <connectionName>DEFAULT</connectionName>
+        <p12File>/Users/user1/apns/project_development.p12</p12File>
+        <p12FileToken>password</p12FileToken>
+        <persistent>true</persistent>
+    </connectionConfig>
+    <maxConnections>16</maxConnections>
+    <minConnections>10</minConnections>
+</APNSConfigFile>
