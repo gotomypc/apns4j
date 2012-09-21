@@ -21,7 +21,8 @@ public class APNSClientTest {
         // creates a message 'message' to the 'DEVICE TOKEN' by the 'DEFAULT' connection
         APNSMessage apmessage = new APNSMessage("2537c7c1331fcff8509f627a032cc7fd19bea3758a9bd0c3c6a746c93d018e47", message, "DEFAULT");
         //single connection
-        APNSConnectionHandler connectionHandler = new APNSConnectionHandler(new File("/Users/linux_china/Downloads/apns/guestpass_development.p12"), "buzhidao".toCharArray());
+        File p12File = new File(System.getProperty("user.home"), "apns/guestpath.p12");
+        APNSConnectionHandler connectionHandler = new APNSConnectionHandler(p12File, "jjjjjjj".toCharArray());
         //sends the message
         connectionHandler.sendMessage(apmessage);
     }
