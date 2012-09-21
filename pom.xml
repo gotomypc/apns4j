@@ -5,7 +5,7 @@
 
     <groupId>net.devmask</groupId>
     <artifactId>apns4j</artifactId>
-    <version>0.0.1</version>
+    <version>0.0.2</version>
     <packaging>jar</packaging>
     <name>Apple push notification service appis for java</name>
     <url>https://github.com/linux-china/apns4j</url>
