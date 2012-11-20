@@ -35,6 +35,7 @@ import javax.net.ssl.SSLSocketFactory;
 import java.io.File;
 import java.io.FileInputStream;
 import java.io.IOException;
+import java.io.InputStream;
 import java.security.*;
 import java.security.cert.CertificateException;
 import java.util.logging.Logger;
@@ -61,7 +62,7 @@ public class APNSConnectionHandler implements APNSConnectionMonitor {
     /**
      * Inits the connectionHandler with a given configuration
      *
-     * @param config
+     * @param config connection config
      */
     public APNSConnectionHandler(APNSConnectionConfig config) throws NoSuchAlgorithmException,
             KeyManagementException, IOException, CertificateException, UnrecoverableKeyException, KeyStoreException, Exception {
@@ -74,8 +75,8 @@ public class APNSConnectionHandler implements APNSConnectionMonitor {
      * loads the key char file and passparse
      * sets the number of concurrent connections to APNS service
      *
-     * @param keyFile
-     * @param passParse
+     * @param keyFile key file
+     * @param passParse       pass parse
      * @throws KeyStoreException
      * @throws NoSuchAlgorithmException
      * @throws IOException
@@ -87,6 +88,25 @@ public class APNSConnectionHandler implements APNSConnectionMonitor {
             NoSuchAlgorithmException, IOException, CertificateException, UnrecoverableKeyException, KeyManagementException, Exception {
         this(keyFile, passParse, false);
     }
+
+    /**
+         * Basic constructor of ASPN Connection
+         * loads the key char file and passparse
+         * sets the number of concurrent connections to APNS service
+         *
+         * @param keyInputStream key input steam
+         * @param passParse       pass parse
+         * @throws KeyStoreException
+         * @throws NoSuchAlgorithmException
+         * @throws IOException
+         * @throws CertificateException
+         * @throws UnrecoverableKeyException
+         * @throws KeyManagementException
+         */
+        public APNSConnectionHandler(InputStream keyInputStream, char[] passParse) throws KeyStoreException,
+                NoSuchAlgorithmException, IOException, CertificateException, UnrecoverableKeyException, KeyManagementException, Exception {
+            this(keyInputStream, passParse, false);
+        }
 
     /**
      * Basic constructor of ASPN Connection
@@ -104,20 +124,37 @@ public class APNSConnectionHandler implements APNSConnectionMonitor {
      */
     public APNSConnectionHandler(File keyFile, char[] passParse, boolean persistent) throws KeyStoreException,
             NoSuchAlgorithmException, IOException, CertificateException, UnrecoverableKeyException, KeyManagementException, Exception {
+        this(new FileInputStream(keyFile), passParse, persistent);
+    }
+
+    /**
+     * Basic constructor of ASPN Connection
+     * loads the key char file and passparse
+     * sets the number of concurrent connections to APNS service
+     *
+     * @param keyInputStream key input stream
+     * @param passParse      pass parse
+     * @throws KeyStoreException
+     * @throws NoSuchAlgorithmException
+     * @throws IOException
+     * @throws CertificateException
+     * @throws UnrecoverableKeyException
+     * @throws KeyManagementException
+     */
+    public APNSConnectionHandler(InputStream keyInputStream, char[] passParse, boolean persistent) throws KeyStoreException,
+            NoSuchAlgorithmException, IOException, CertificateException, UnrecoverableKeyException, KeyManagementException, Exception {
         if (passParse.length <= 0) {
             throw new Exception("Exception passParse cant be null OR blank");
         }
         keyStore = KeyStore.getInstance("PKCS12");
         keyManagerFactory = KeyManagerFactory.getInstance("SunX509");
         sslContext = SSLContext.getInstance("TLS");
-        keyStore.load(new FileInputStream(keyFile), passParse);
+        keyStore.load(keyInputStream, passParse);
         keyManagerFactory.init(keyStore, passParse);
         sslContext.init(keyManagerFactory.getKeyManagers(), null, null);
         sslSocketFactory = sslContext.getSocketFactory();
         this.persistent = persistent;
-
         initSocketConnection();
-
     }
 
     /**
