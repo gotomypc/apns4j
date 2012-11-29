@@ -85,8 +85,6 @@ public class APNSConnection extends Thread {
                     checkSanity();
                     if (queue.size() >= 1) {
                         messageWriter(queue.remove());
-                        //Todo: this inst the safe way
-                        if (persistent) break;
                     }
 
                     try {
