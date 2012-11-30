@@ -124,8 +124,7 @@ public class APNSConnection extends Thread {
             outputStream.flush();
 
         } catch (IOException e) {
-            log.error("Failed to send APNS message:" + APNSMessage.getDestination());
-            e.printStackTrace();
+            log.error("Failed to send APNS message:" + APNSMessage.getDestination(), e);
         }
 
     }
