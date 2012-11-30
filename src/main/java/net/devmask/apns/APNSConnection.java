@@ -88,11 +88,10 @@ public class APNSConnection extends Thread {
                     if (queue.size() >= 1) {
                         messageWriter(queue.remove());
                     }
-
                     try {
-                        Thread.sleep(100);
-                    } catch (InterruptedException e) {
-                        e.printStackTrace();
+                        Thread.sleep(200);
+                    } catch (InterruptedException ignore) {
+
                     }
                 }
             }
@@ -105,25 +104,20 @@ public class APNSConnection extends Thread {
      * @param APNSMessage
      */
     private void messageWriter(APNSMessage APNSMessage) {
-
         try {
             ByteArrayOutputStream baos = new ByteArrayOutputStream();
             DataOutputStream dos = new DataOutputStream(baos);
-
             dos.writeByte(APNSMessage.COMMAND);
             dos.writeShort(APNSMessage.getDeviceTokenLenght());
             dos.write(APNSMessage.getDeviceToken());
             dos.writeShort(APNSMessage.getPayloadLength());
             dos.write(APNSMessage.getPayLoad());
-
-
             byte[] output = baos.toByteArray();
-
             outputStream.write(output);
             log.info("[pid]" + Thread.currentThread().getId() + "Sending APNSMessage: " + new String(Hex.encodeHex(baos.toByteArray())));
             outputStream.flush();
-
         } catch (IOException e) {
+            monitor.onAPNSStop(socket);
             log.error("Failed to send APNS message:" + new String(APNSMessage.getPayLoad()), e);
         }
 
@@ -164,8 +158,12 @@ public class APNSConnection extends Thread {
 
 
     private void checkSanity() {
-        if (socket.isClosed() && socket.isInputShutdown() && socket.isOutputShutdown()) {
-            monitor.onAPNSStop(socket);
+        try {
+            if (socket.isClosed() && socket.isInputShutdown() && socket.isOutputShutdown()) {
+                monitor.onAPNSStop(socket);
+            }
+        } catch (Exception e) {
+            log.error("APNS: failed to check sanity", e);
         }
     }
 
