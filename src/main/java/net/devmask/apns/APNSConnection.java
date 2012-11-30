@@ -29,6 +29,8 @@
 package net.devmask.apns;
 
 import org.apache.commons.codec.binary.Hex;
+import org.apache.commons.logging.Log;
+import org.apache.commons.logging.LogFactory;
 
 import javax.net.ssl.SSLSocket;
 import java.io.ByteArrayOutputStream;
@@ -37,13 +39,13 @@ import java.io.IOException;
 import java.io.OutputStream;
 import java.util.Collections;
 import java.util.concurrent.PriorityBlockingQueue;
-import java.util.logging.Logger;
 
 /**
  * User: Jonathan Garay <netmask@webtelmex.net.mx>
  * Created: Apr 9, 2009 3:14:39 PM
  */
 public class APNSConnection extends Thread {
+    private Log log = LogFactory.getLog(APNSConnection.class);
     private SSLSocket socket;
     private OutputStream outputStream;
     private volatile PriorityBlockingQueue<APNSMessage> queue;
@@ -62,10 +64,10 @@ public class APNSConnection extends Thread {
         try {
             outputStream = this.socket.getOutputStream();
             queue = new PriorityBlockingQueue<APNSMessage>(50);
-            Logger.getAnonymousLogger().info("Connection ready " + Thread.currentThread().getId());
+            log.info("Connection ready " + Thread.currentThread().getId());
             messageQueueWorker();
         } catch (IOException e) {
-            Logger.getAnonymousLogger().warning(e.getLocalizedMessage());
+            log.warn(e.getLocalizedMessage());
         }
     }
 
@@ -118,10 +120,11 @@ public class APNSConnection extends Thread {
             byte[] output = baos.toByteArray();
 
             outputStream.write(output);
-            Logger.getAnonymousLogger().info("[pid]" + Thread.currentThread().getId() + "Sending APNSMessage: " + new String(Hex.encodeHex(baos.toByteArray())));
+            log.info("[pid]" + Thread.currentThread().getId() + "Sending APNSMessage: " + new String(Hex.encodeHex(baos.toByteArray())));
             outputStream.flush();
 
         } catch (IOException e) {
+            log.error("Failed to send APNS message:" + APNSMessage.getDestination());
             e.printStackTrace();
         }
 
