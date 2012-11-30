@@ -30,15 +30,17 @@ package net.devmask.apns;
 
 import org.apache.commons.codec.DecoderException;
 import org.apache.commons.codec.binary.Hex;
+import org.apache.commons.logging.Log;
+import org.apache.commons.logging.LogFactory;
 
 import java.io.UnsupportedEncodingException;
-import java.util.logging.Logger;
 
 /**
  * User: Jonathan Garay <netmask@webtelmex.net.mx>
  * Created: Apr 9, 2009 2:19:51 PM
  */
 public class APNSMessage implements Comparable {
+    private static Log log = LogFactory.getLog(APNSMessage.class);
 
     public enum DESTINATION {
         DEFAULT,
@@ -66,7 +68,9 @@ public class APNSMessage implements Comparable {
      * @throws DecoderException
      */
     public APNSMessage(String deviceToken, String payload) throws UnsupportedEncodingException, DecoderException {
-        if (payload.length() > 128) Logger.getAnonymousLogger().warning("payload length > 128 ");
+        if (payload.length() > 128) {
+            log.warn("APNS: payload length > 128 :" + payload);
+        }
         this.deviceToken = Hex.decodeHex(deviceToken.replace(" ", "").toCharArray());
         this.deviceTokenLenght = (short) this.deviceToken.length;
         this.payLoad = payload.getBytes("UTF-8");
