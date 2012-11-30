@@ -28,6 +28,9 @@
 
 package net.devmask.apns;
 
+import org.apache.commons.logging.Log;
+import org.apache.commons.logging.LogFactory;
+
 import javax.net.ssl.KeyManagerFactory;
 import javax.net.ssl.SSLContext;
 import javax.net.ssl.SSLSocket;
@@ -38,14 +41,13 @@ import java.io.IOException;
 import java.io.InputStream;
 import java.security.*;
 import java.security.cert.CertificateException;
-import java.util.logging.Logger;
 
 /**
  * User: Jonathan Garay <netmask@webtelmex.net.mx>
  * Created: Apr 9, 2009 2:57:37 PM
  */
 public class APNSConnectionHandler implements APNSConnectionMonitor {
-
+    private Log log = LogFactory.getLog(APNSConnectionHandler.class);
     private SSLSocketFactory sslSocketFactory;
     private SSLContext sslContext;
     private KeyStore keyStore;
@@ -75,8 +77,8 @@ public class APNSConnectionHandler implements APNSConnectionMonitor {
      * loads the key char file and passparse
      * sets the number of concurrent connections to APNS service
      *
-     * @param keyFile key file
-     * @param passParse       pass parse
+     * @param keyFile   key file
+     * @param passParse pass parse
      * @throws KeyStoreException
      * @throws NoSuchAlgorithmException
      * @throws IOException
@@ -90,23 +92,23 @@ public class APNSConnectionHandler implements APNSConnectionMonitor {
     }
 
     /**
-         * Basic constructor of ASPN Connection
-         * loads the key char file and passparse
-         * sets the number of concurrent connections to APNS service
-         *
-         * @param keyInputStream key input steam
-         * @param passParse       pass parse
-         * @throws KeyStoreException
-         * @throws NoSuchAlgorithmException
-         * @throws IOException
-         * @throws CertificateException
-         * @throws UnrecoverableKeyException
-         * @throws KeyManagementException
-         */
-        public APNSConnectionHandler(InputStream keyInputStream, char[] passParse) throws KeyStoreException,
-                NoSuchAlgorithmException, IOException, CertificateException, UnrecoverableKeyException, KeyManagementException, Exception {
-            this(keyInputStream, passParse, false);
-        }
+     * Basic constructor of ASPN Connection
+     * loads the key char file and passparse
+     * sets the number of concurrent connections to APNS service
+     *
+     * @param keyInputStream key input steam
+     * @param passParse      pass parse
+     * @throws KeyStoreException
+     * @throws NoSuchAlgorithmException
+     * @throws IOException
+     * @throws CertificateException
+     * @throws UnrecoverableKeyException
+     * @throws KeyManagementException
+     */
+    public APNSConnectionHandler(InputStream keyInputStream, char[] passParse) throws KeyStoreException,
+            NoSuchAlgorithmException, IOException, CertificateException, UnrecoverableKeyException, KeyManagementException, Exception {
+        this(keyInputStream, passParse, false);
+    }
 
     /**
      * Basic constructor of ASPN Connection
@@ -165,13 +167,13 @@ public class APNSConnectionHandler implements APNSConnectionMonitor {
         try {
             SSLSocket socket = (SSLSocket) sslSocketFactory.createSocket(apnsHost, apnsPort);
             socket.startHandshake();
-            Logger.getAnonymousLogger().info("Authentication Succes");
+            log.info("Authentication Succes");
             socket.setKeepAlive(true);
 
             apnsConnection = new APNSConnection(socket, persistent);
 
         } catch (Exception ex) {
-            Logger.getAnonymousLogger().warning(ex.getLocalizedMessage());
+            log.error(ex.getLocalizedMessage(), ex);
         }
 
 
@@ -198,7 +200,7 @@ public class APNSConnectionHandler implements APNSConnectionMonitor {
 
 
     public void onAPNSStop(SSLSocket socket) {
-        Logger.getAnonymousLogger().warning("Un spected shutdown");
+        log.warn("APNS: Un spected shutdown");
         if (persistent) initSocketConnection();
 
     }
