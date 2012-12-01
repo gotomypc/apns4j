@@ -116,7 +116,7 @@ public class APNSConnection extends Thread {
             outputStream.write(output);
             log.info("[pid]" + Thread.currentThread().getId() + "Sending APNSMessage: " + new String(Hex.encodeHex(baos.toByteArray())));
             outputStream.flush();
-        } catch (IOException e) {
+        } catch (Exception e) {
             monitor.onAPNSStop(socket);
             log.error("Failed to send APNS message:" + new String(APNSMessage.getPayLoad()), e);
         }
